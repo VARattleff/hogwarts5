@@ -61,9 +61,6 @@ public class StudentService {
       if(student.gender() != null) {
         studentToUpdate.setGender(student.gender());
       }
-        if(student.isPrefect() != null) {
-            studentToUpdate.setPrefect(student.isPrefect());
-        }
       return Optional.of(toDTO(studentRepository.save(studentToUpdate)));
     } else {
       throw new NotFoundException("Student with id " + id + " not found");
@@ -80,28 +77,28 @@ public class StudentService {
     }
   }
 
-  private StudentResponseDTO toDTO(Student studentEntity) {
-      return new StudentResponseDTO(
-        studentEntity.getId(),
-        studentEntity.getFirstName(),
-        studentEntity.getMiddleName(),
-        studentEntity.getLastName(),
-        studentEntity.getHouse().getName(),
-        studentEntity.getSchoolYear(),
-        studentEntity.getGender(),
-        studentEntity.getPrefect()
+  public StudentResponseDTO toDTO(Student studentEntity) {
+    return new StudentResponseDTO(
+      studentEntity.getId(),
+      studentEntity.getFirstName(),
+      studentEntity.getMiddleName(),
+      studentEntity.getLastName(),
+      studentEntity.getHouse().getName(),
+      studentEntity.getSchoolYear(),
+      studentEntity.getGender(),
+      studentEntity.getPrefect()
     );
   }
 
-  private Student fromDTO(StudentRequestDTO studentDTO) {
+  public Student fromDTO(StudentRequestDTO studentDTO) {
     return new Student(
-            studentDTO.firstName(),
-            studentDTO.middleName(),
-            studentDTO.lastName(),
-            houseService.findById(studentDTO.house()).orElseThrow(() -> new NotFoundException("House with id " + studentDTO.house() + " not found")),
-            studentDTO.schoolYear(),
-            studentDTO.gender(),
-            studentDTO.isPrefect()
+      studentDTO.firstName(),
+      studentDTO.middleName(),
+      studentDTO.lastName(),
+      houseService.findById(studentDTO.house()).orElseThrow(() -> new NotFoundException("House with id " + studentDTO.house() + " not found")),
+      studentDTO.schoolYear(),
+      studentDTO.gender(),
+      studentDTO.isPrefect()
     );
   }
 }

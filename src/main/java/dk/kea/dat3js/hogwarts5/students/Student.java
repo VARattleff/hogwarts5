@@ -18,7 +18,7 @@ public class Student {
   private Integer schoolYear; // 1-7
 
   //---------------------------------------
-  // add gender and isPrefect, and their getters and setters
+  // add gender and isPrefect
 
   private Gender gender;
   private Boolean isPrefect;

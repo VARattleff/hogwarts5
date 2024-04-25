@@ -47,4 +47,6 @@ public class StudentController {
   public ResponseEntity<StudentResponseDTO> deleteStudent(@PathVariable int id) {
     return ResponseEntity.of(studentService.deleteById(id));
   }
+
+  // students skal ligeledes have en PATCH request for at tilføje/fjerne prefect udnævnelsen - men bruge samme regler som /prefects
 }

@@ -65,11 +65,9 @@ public class InitData implements CommandLineRunner {
       hufflepuff = new House("Hufflepuff", "Helga Hufflepuff", new String[] {"yellow", "black"});
       ravenclaw = new House("Ravenclaw", "Rowena Ravenclaw", new String[] {"blue", "bronze"});
 
-     houseRepository.save(gryffindor);
+      houseRepository.save(gryffindor);
       houseRepository.save(slytherin);
       houseRepository.save(hufflepuff);
       houseRepository.save(ravenclaw);
-
-
   }
 }
