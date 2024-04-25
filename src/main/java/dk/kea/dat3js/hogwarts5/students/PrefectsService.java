@@ -75,4 +75,16 @@ public class PrefectsService {
 
         return ResponseEntity.ok().body(studentService.toDTOList(prefects));
     }
+
+    public ResponseEntity<List<StudentResponseDTO>> getPrefectsByHouse(String house) {
+        List<Student> prefects = studentRepository.findAll().stream()
+                .filter(s -> s.getHouse().getName().equals(house) && s.getPrefect())
+                .collect(Collectors.toList());
+
+        if (prefects.isEmpty()) {
+            throw new ValidationException("No prefects found in house " + house);
+        }
+
+        return ResponseEntity.ok().body(studentService.toDTOList(prefects));
+    }
 }

@@ -34,4 +34,8 @@ public class PrefectsController {
     }
 
     // GET /prefects/house/{house} - returnerer en liste over alle prefects i det house
+    @GetMapping("/house/{house}")
+    public ResponseEntity<List<StudentResponseDTO>> getPrefectsByHouse(@PathVariable String house) {
+      return prefectsService.getPrefectsByHouse(house);
+    }
 }
