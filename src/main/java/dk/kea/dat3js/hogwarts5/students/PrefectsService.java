@@ -20,31 +20,11 @@ public class PrefectsService {
     }
 
 
-    public Boolean appointPrefectValidationCheck(int id){
-        Student student = studentRepository.findById(id).orElseThrow(() -> new NotFoundException("Student with id " + id + " not found"));
-
-        List<Student> prefectsInSameHouse = studentRepository.findAll().stream()
-                .filter(s -> s.getHouse().equals(student.getHouse()) && s.getPrefect())
-                .toList();
-
-        if (prefectsInSameHouse.size() >= 2) {
-            return false;
-        }
-
-        if (prefectsInSameHouse.size() == 1) {
-            if (prefectsInSameHouse.getFirst().getGender().equals(student.getGender())) {
-                return false;
-            }
-        }
-
-        return student.getSchoolYear() >= 5;
-    }
-
     public ResponseEntity<StudentResponseDTO> appointPrefect(int id) {
         Optional<Student> studentOptional = studentRepository.findById(id);
         if(studentOptional.isPresent()) {
             Student student = studentOptional.orElseThrow(() -> new NotFoundException("Student with id " + id + " not found"));
-            if(appointPrefectValidationCheck(id)){
+            if(studentService.appointPrefectValidationCheck(id)){
                 student.setPrefect(true);
                 studentRepository.save(student);
                 return ResponseEntity.ok().body(studentService.toDTO(student));

@@ -14,12 +14,10 @@ import java.util.stream.Collectors;
 public class StudentService {
   private final StudentRepository studentRepository;
   private final HouseService houseService;
-  PrefectsService prefectsService;
 
-  public StudentService(StudentRepository studentRepository, HouseService houseService, PrefectsService prefectsService) {
+  public StudentService(StudentRepository studentRepository, HouseService houseService) {
     this.studentRepository = studentRepository;
     this.houseService = houseService;
-    this.prefectsService = prefectsService;
   }
 
   public List<StudentResponseDTO> findAll() {
@@ -113,11 +111,31 @@ public class StudentService {
             .collect(Collectors.toList());
   }
 
+  public Boolean appointPrefectValidationCheck(int id){
+    Student student = studentRepository.findById(id).orElseThrow(() -> new NotFoundException("Student with id " + id + " not found"));
+
+    List<Student> prefectsInSameHouse = studentRepository.findAll().stream()
+            .filter(s -> s.getHouse().equals(student.getHouse()) && s.getPrefect())
+            .toList();
+
+    if (prefectsInSameHouse.size() >= 2) {
+      return false;
+    }
+
+    if (prefectsInSameHouse.size() == 1) {
+      if (prefectsInSameHouse.getFirst().getGender().equals(student.getGender())) {
+        return false;
+      }
+    }
+
+    return student.getSchoolYear() >= 5;
+  }
+
   public ResponseEntity<StudentResponseDTO> appointPrefect(int id) {
     Optional<Student> studentOptional = studentRepository.findById(id);
     if(studentOptional.isPresent()) {
       Student student = studentOptional.orElseThrow(() -> new NotFoundException("Student with id " + id + " not found"));
-      if(prefectsService.appointPrefectValidationCheck(id)){
+      if(appointPrefectValidationCheck(id)){
         student.setPrefect(!student.getPrefect());
         studentRepository.save(student);
         return ResponseEntity.ok().body(toDTO(student));
