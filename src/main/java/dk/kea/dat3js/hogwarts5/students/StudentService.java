@@ -1,5 +1,6 @@
 package dk.kea.dat3js.hogwarts5.students;
 
+import dk.kea.dat3js.hogwarts5.errorhandling.exception.NotFoundException;
 import dk.kea.dat3js.hogwarts5.house.HouseService;
 import org.springframework.stereotype.Service;
 
@@ -34,8 +35,7 @@ public class StudentService {
       existingStudent.setId(id);
       return Optional.of(toDTO(studentRepository.save(existingStudent)));
     } else {
-      // TODO: Throw error?
-      return Optional.empty();
+      throw new NotFoundException("Student with id " + id + " not found");
     }
   }
 
@@ -58,41 +58,50 @@ public class StudentService {
       if(student.schoolYear() != null) {
         studentToUpdate.setSchoolYear(student.schoolYear());
       }
+      if(student.gender() != null) {
+        studentToUpdate.setGender(student.gender());
+      }
+        if(student.isPrefect() != null) {
+            studentToUpdate.setPrefect(student.isPrefect());
+        }
       return Optional.of(toDTO(studentRepository.save(studentToUpdate)));
     } else {
-      // TODO: handle error
-      return Optional.empty();
+      throw new NotFoundException("Student with id " + id + " not found");
     }
   }
 
   public Optional<StudentResponseDTO> deleteById(int id) {
     Optional<StudentResponseDTO> existingStudent = studentRepository.findById(id).map(this::toDTO);
-    studentRepository.deleteById(id);
-    return existingStudent;
+    if(existingStudent.isPresent()) {
+      studentRepository.deleteById(id);
+      return existingStudent;
+    } else {
+      throw new NotFoundException("Student with id " + id + " not found");
+    }
   }
 
   private StudentResponseDTO toDTO(Student studentEntity) {
-    StudentResponseDTO dto = new StudentResponseDTO(
+      return new StudentResponseDTO(
         studentEntity.getId(),
         studentEntity.getFirstName(),
         studentEntity.getMiddleName(),
         studentEntity.getLastName(),
         studentEntity.getHouse().getName(),
-        studentEntity.getSchoolYear()
+        studentEntity.getSchoolYear(),
+        studentEntity.getGender(),
+        studentEntity.getPrefect()
     );
-
-    return dto;
   }
 
   private Student fromDTO(StudentRequestDTO studentDTO) {
-    Student entity = new Student(
-        studentDTO.firstName(),
-        studentDTO.middleName(),
-        studentDTO.lastName(),
-        houseService.findById(studentDTO.house()).orElseThrow(),
-        studentDTO.schoolYear()
+    return new Student(
+            studentDTO.firstName(),
+            studentDTO.middleName(),
+            studentDTO.lastName(),
+            houseService.findById(studentDTO.house()).orElseThrow(() -> new NotFoundException("House with id " + studentDTO.house() + " not found")),
+            studentDTO.schoolYear(),
+            studentDTO.gender(),
+            studentDTO.isPrefect()
     );
-
-    return entity;
   }
 }

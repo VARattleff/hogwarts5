@@ -17,19 +17,45 @@ public class Student {
   private House house;
   private Integer schoolYear; // 1-7
 
+  //---------------------------------------
+  // add gender and isPrefect, and their getters and setters
+
+  private Gender gender;
+  private Boolean isPrefect;
+
+  public Gender getGender() {
+    return gender;
+  }
+
+  public void setGender(Gender gender) {
+    this.gender = gender;
+  }
+
+  public Boolean getPrefect() {
+    return isPrefect;
+  }
+
+  public void setPrefect(Boolean prefect) {
+    isPrefect = prefect;
+  }
+
+  //---------------------------------------
+
   public Student() {
   }
 
-  public Student(String firstName, String lastName, House house, int schoolYear) {
-    this(firstName, null, lastName, house, schoolYear);
+  public Student(String firstName, String lastName, House house, int schoolYear, Gender gender, Boolean isPrefect) {
+    this(firstName, null, lastName, house, schoolYear, gender, isPrefect);
   }
 
-  public Student(String firstName, String middleName, String lastName, House house, int schoolYear) {
+  public Student(String firstName, String middleName, String lastName, House house, int schoolYear, Gender gender, Boolean isPrefect) {
     this.firstName = firstName;
     this.middleName = middleName;
     this.lastName = lastName;
     this.house = house;
     this.schoolYear = schoolYear;
+    this.gender = gender;
+    this.isPrefect = isPrefect;
   }
 
   public int getId() {
@@ -85,12 +111,16 @@ public class Student {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
     Student student = (Student) o;
-    return Objects.equals(getFirstName(), student.getFirstName()) && Objects.equals(getMiddleName(), student.getMiddleName()) && Objects.equals(getLastName(), student.getLastName()) && Objects.equals(getHouse().getName(), student.getHouse().getName());
+    return Objects.equals(getFirstName(), student.getFirstName()) &&
+            Objects.equals(getMiddleName(), student.getMiddleName()) &&
+            Objects.equals(getLastName(), student.getLastName()) &&
+            Objects.equals(getHouse().getName(), student.getHouse().getName()) &&
+            Objects.equals(getGender(), student.getGender()) &&
+            Objects.equals(getPrefect(), student.getPrefect());
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(getFirstName(), getMiddleName(), getLastName(), getHouse().getName());
+    return Objects.hash(getFirstName(), getMiddleName(), getLastName(), getHouse().getName(), getGender(), getPrefect());
   }
-
 }
