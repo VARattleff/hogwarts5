@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class StudentService {
@@ -100,5 +101,11 @@ public class StudentService {
       studentDTO.gender(),
       studentDTO.isPrefect()
     );
+  }
+
+  public List<StudentResponseDTO> toDTOList(List<Student> prefects) {
+    return prefects.stream()
+            .map(this::toDTO)
+            .collect(Collectors.toList());
   }
 }

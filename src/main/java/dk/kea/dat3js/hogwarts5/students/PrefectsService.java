@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class PrefectsService {
@@ -61,5 +62,17 @@ public class PrefectsService {
             throw new ValidationException("Student with id " + id + " is not a prefect");
         }
         return ResponseEntity.ok().body(studentService.toDTO(student));
+    }
+
+    public ResponseEntity<List<StudentResponseDTO>> getAllPrefects() {
+        List<Student> prefects = studentRepository.findAll().stream()
+                .filter(Student::getPrefect)
+                .collect(Collectors.toList());
+
+        if (prefects.isEmpty()) {
+            throw new ValidationException("No prefects found");
+        }
+
+        return ResponseEntity.ok().body(studentService.toDTOList(prefects));
     }
 }
