@@ -55,4 +55,11 @@ public class PrefectsService {
         }
     }
 
+    public ResponseEntity<StudentResponseDTO> getPrefectById(int id) {
+        Student student = studentRepository.findById(id).orElseThrow(() -> new NotFoundException("Student with id " + id + " not found"));
+        if (!student.getPrefect()) {
+            throw new ValidationException("Student with id " + id + " is not a prefect");
+        }
+        return ResponseEntity.ok().body(studentService.toDTO(student));
+    }
 }
