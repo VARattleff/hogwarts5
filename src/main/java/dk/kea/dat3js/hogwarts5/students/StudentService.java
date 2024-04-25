@@ -1,7 +1,9 @@
 package dk.kea.dat3js.hogwarts5.students;
 
 import dk.kea.dat3js.hogwarts5.errorhandling.exception.NotFoundException;
+import dk.kea.dat3js.hogwarts5.errorhandling.exception.ValidationException;
 import dk.kea.dat3js.hogwarts5.house.HouseService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,10 +14,12 @@ import java.util.stream.Collectors;
 public class StudentService {
   private final StudentRepository studentRepository;
   private final HouseService houseService;
+  PrefectsService prefectsService;
 
-  public StudentService(StudentRepository studentRepository, HouseService houseService) {
+  public StudentService(StudentRepository studentRepository, HouseService houseService, PrefectsService prefectsService) {
     this.studentRepository = studentRepository;
     this.houseService = houseService;
+    this.prefectsService = prefectsService;
   }
 
   public List<StudentResponseDTO> findAll() {
@@ -107,5 +111,21 @@ public class StudentService {
     return prefects.stream()
             .map(this::toDTO)
             .collect(Collectors.toList());
+  }
+
+  public ResponseEntity<StudentResponseDTO> appointPrefect(int id) {
+    Optional<Student> studentOptional = studentRepository.findById(id);
+    if(studentOptional.isPresent()) {
+      Student student = studentOptional.orElseThrow(() -> new NotFoundException("Student with id " + id + " not found"));
+      if(prefectsService.appointPrefectValidationCheck(id)){
+        student.setPrefect(!student.getPrefect());
+        studentRepository.save(student);
+        return ResponseEntity.ok().body(toDTO(student));
+      } else {
+        throw new ValidationException("Student with id " + id + " could not be appointed as prefect");
+      }
+    } else {
+      return ResponseEntity.notFound().build();
+    }
   }
 }
